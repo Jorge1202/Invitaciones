@@ -1,69 +1,77 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 
+/**
+ * Define routes that don't require authentication.
+ */
+const PUBLIC_ROUTES = [
+  "/",
+  "/studio/auth",
+  "/command/auth",
+];
+
+const PUBLIC_PREFIXES = [
+  "/e/",             // Public invitations
+  "/api/webhooks",   // External webhooks
+  "/api/auth",       // NextAuth API routes
+];
+
 const isPublicRoute = (pathname: string) => {
-  const publicPaths = [
-    "/",
-    "/studio/auth",
-    "/command/auth",
-    "/api/auth",
-  ];
   return (
-    publicPaths.some((path) => pathname === path || pathname.startsWith(path)) ||
-    pathname.startsWith("/e/") ||
-    pathname.startsWith("/api/webhooks")
+    PUBLIC_ROUTES.includes(pathname) ||
+    PUBLIC_PREFIXES.some((prefix) => pathname.startsWith(prefix))
   );
 };
 
 export default auth((req) => {
   const { nextUrl } = req;
-  const isLoggedIn = !!req.auth;
+  const session = req.auth;
+  const isLoggedIn = !!session;
   const pathname = nextUrl.pathname;
 
-  // 1. If public route, let it pass
+  // 1. Allow public routes
   if (isPublicRoute(pathname)) {
     return NextResponse.next();
   }
 
-  // 2. If not logged in and not public, redirect to sign-in
+  // 2. Security: Force login for ALL other routes
   if (!isLoggedIn) {
-    let callbackUrl = pathname;
-    if (nextUrl.search) {
-      callbackUrl += nextUrl.search;
-    }
-
-    const encodedCallbackUrl = encodeURIComponent(callbackUrl);
-    
-    // Choose auth path based on where they were trying to go
+    const callbackUrl = encodeURIComponent(pathname + nextUrl.search);
     const authPath = pathname.startsWith("/command") ? "/command/auth" : "/studio/auth";
-    
-    return NextResponse.redirect(
-      new URL(`${authPath}?callbackUrl=${encodedCallbackUrl}`, nextUrl)
-    );
+    return NextResponse.redirect(new URL(`${authPath}?callbackUrl=${callbackUrl}`, nextUrl));
   }
 
-  // 3. Role-based routing (Guardian logic)
-  const role = req.auth?.user?.role;
+  // 3. Role-Based Access Control (RBAC)
+  const role = session.user?.role;
 
-  // Super Admin logic
-  if (pathname.startsWith("/command") && role !== "super_admin") {
-    return NextResponse.redirect(new URL("/studio", nextUrl));
+  // Protect /command (Super Admin only)
+  if (pathname.startsWith("/command")) {
+    if (role !== "super_admin") {
+      // If a Revendedor tries to enter /command, send them back to /studio
+      return NextResponse.redirect(new URL("/studio", nextUrl));
+    }
   }
 
-  // Tenant Admin logic
-  if (pathname.startsWith("/studio") && role === "super_admin") {
-    // Super Admin can visit Studio (Impersonation or internal view)
-    return NextResponse.next();
+  // Protect /studio (Super Admin OR Tenant Admin)
+  if (pathname.startsWith("/studio")) {
+    if (role !== "super_admin" && role !== "tenant_admin") {
+      // If for some reason an Event Owner or Guest ends up here
+      return NextResponse.redirect(new URL("/", nextUrl));
+    }
   }
-
-  // Add more logic for other roles as needed...
 
   return NextResponse.next();
 });
 
 export const config = {
   matcher: [
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    "/(api|trpc)(.*)",
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - Public assets (images, fonts, etc)
+     */
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ttf|woff2?|css|js)).*)",
   ],
 };

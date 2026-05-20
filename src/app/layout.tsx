@@ -17,6 +17,9 @@ export const metadata: Metadata = {
   description: "Plataforma de invitaciones digitales inteligentes",
 };
 
+import { Suspense } from "react";
+import { ProgressBar } from "@/components/shared/progress-bar";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -25,6 +28,9 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${inter.variable} ${fraunces.variable} antialiased`}>
+        <Suspense fallback={null}>
+          <ProgressBar />
+        </Suspense>
         {children}
       </body>
     </html>
