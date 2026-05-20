@@ -34,7 +34,14 @@ const config: Config = {
           botanic: "#2D5F4E",
         },
       },
+      boxShadow: {
+        'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+        'premium': '0 20px 25px -5px rgba(184, 116, 90, 0.05), 0 10px 10px -5px rgba(184, 116, 90, 0.02)',
+      },
       borderRadius: {
+        '2xl': '1rem',
+        '3xl': '1.5rem',
+        '4xl': '2rem',
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",

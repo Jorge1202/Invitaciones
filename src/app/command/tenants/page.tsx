@@ -2,6 +2,7 @@ import { getTenants } from "@/actions/tenant-actions";
 import { CreateTenantModal } from "@/components/command/create-tenant-modal";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import Link from "next/link";
 
 export default async function TenantsPage() {
   const tenants = await getTenants();
@@ -32,8 +33,10 @@ export default async function TenantsPage() {
             {tenants.map((tenant) => (
               <tr key={tenant.id} className="hover:bg-command-surface-hi transition-colors group">
                 <td className="p-4">
-                  <p className="font-semibold">{tenant.name}</p>
-                  <p className="text-xs text-command-text-dim">{tenant.slug}.invitaweb.com</p>
+                  <Link href={`/command/tenants/${tenant.id}`} className="block">
+                    <p className="font-semibold group-hover:text-command-accent transition-colors">{tenant.name}</p>
+                    <p className="text-xs text-command-text-dim">{tenant.slug}.invitaweb.com</p>
+                  </Link>
                 </td>
                 <td className="p-4">
                   <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
@@ -60,9 +63,12 @@ export default async function TenantsPage() {
                   {format(new Date(tenant.createdAt), "dd MMM yyyy", { locale: es })}
                 </td>
                 <td className="p-4">
-                  <button className="text-xs bg-command-bg border border-command-border px-3 py-1 rounded hover:border-command-accent transition-colors">
+                  <Link 
+                    href={`/command/tenants/${tenant.id}`}
+                    className="text-xs bg-command-bg border border-command-border px-3 py-1 rounded hover:border-command-accent hover:text-command-accent transition-colors"
+                  >
                     Detalles
-                  </button>
+                  </Link>
                 </td>
               </tr>
             ))}
