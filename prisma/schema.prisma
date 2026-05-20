@@ -1,0 +1,183 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  super_admin
+  tenant_admin
+  event_owner
+  guest
+}
+
+enum Plan {
+  basic
+  deluxe
+  vip
+}
+
+enum TemplateStatus {
+  draft
+  published
+  featured
+  archived
+}
+
+// --- Auth.js Tables ---
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?   // For credentials login
+  role          Role      @default(tenant_admin)
+  tenantId      String?
+  tenant        Tenant?   @relation(fields: [tenantId], references: [id])
+  accounts      Account[]
+  sessions      Session[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([tenantId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// --- Business Tables ---
+
+model Tenant {
+  id            String   @id @default(cuid())
+  name          String
+  slug          String   @unique
+  plan          Plan     @default(basic)
+  isActive      Boolean  @default(true)
+  branding      Json?    // { logoUrl, primaryColor, etc }
+  users         User[]
+  events        Event[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Template {
+  id            String         @id @default(cuid())
+  name          String
+  description   String?
+  category      String?
+  mood          String?
+  status        TemplateStatus @default(draft)
+  config        Json           // Structure, allowed colors, fonts, etc
+  versions      TemplateVersion[]
+  events        Event[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+}
+
+model TemplateVersion {
+  id            String   @id @default(cuid())
+  templateId    String
+  template      Template @relation(fields: [templateId], references: [id])
+  versionNumber Int
+  config        Json     // Specific config for this version
+  createdAt     DateTime @default(now())
+
+  @@unique([templateId, versionNumber])
+}
+
+model Event {
+  id                String   @id @default(cuid())
+  tenantId          String
+  tenant            Tenant   @relation(fields: [tenantId], references: [id])
+  templateId        String
+  template          Template @relation(fields: [templateId], references: [id])
+  templateVersion   Int
+  slug              String   @unique
+  name              String
+  date              DateTime
+  location          String?
+  itinerary         Json?    // Multi-sede
+  config            Json?    // Specific event overrides
+  guests            Guest[]
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([tenantId])
+}
+
+model Guest {
+  id                String   @id @default(cuid())
+  eventId           String
+  event             Event    @relation(fields: [eventId], references: [id])
+  tenantId          String   // Denormalized for multi-tenant isolation rules
+  name              String
+  passes            Int      @default(1)
+  token             String   @unique // Unique link token
+  status            RSVPStatus @default(pending)
+  confirmedPasses   Int?
+  preferences       Json?    // Diet, songs, etc
+  qrScanned         Boolean  @default(false)
+  qrScannedAt       DateTime?
+  messages          GuestMessage[]
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([eventId])
+  @@index([tenantId])
+}
+
+enum RSVPStatus {
+  pending
+  confirmed
+  declined
+}
+
+model GuestMessage {
+  id            String   @id @default(cuid())
+  guestId       String
+  guest         Guest    @relation(fields: [guestId], references: [id])
+  content       String?
+  mediaUrl      String?  // Photo or audio
+  mediaType     String?  // "photo", "audio"
+  isApproved    Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  @@index([guestId])
+}
