@@ -25,10 +25,10 @@
 
 ---
 
-## Fase C — Guest Manager + Tokens (~4h)
+## Fase C — Guest Manager + Tokens (~4h) ✅
 
-- [ ] **C-1** Crear `src/actions/guest-actions.ts` con CRUD + generador de tokens
-- [ ] **C-2** Crear `src/app/studio/events/[id]/guests/page.tsx` — tabla + add + CSV
+- [x] **C-1** Crear `src/actions/guest-actions.ts` con CRUD + generador de tokens
+- [x] **C-2** Crear `src/app/studio/events/[id]/guests/page.tsx` — tabla + add + CSV
 
 **✓ Checkpoint C:** Invitados cargados, links de invitación generados.
 

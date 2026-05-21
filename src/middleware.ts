@@ -52,10 +52,12 @@ export default auth((req) => {
     }
   }
 
-  // Protect /studio (Super Admin OR Tenant Admin)
+  // Protect /studio (Tenant Admin only — Super Admin belongs in /command)
   if (pathname.startsWith("/studio")) {
-    if (role !== "super_admin" && role !== "tenant_admin") {
-      // If for some reason an Event Owner or Guest ends up here
+    if (role === "super_admin") {
+      return NextResponse.redirect(new URL("/command", nextUrl));
+    }
+    if (role !== "tenant_admin") {
       return NextResponse.redirect(new URL("/", nextUrl));
     }
   }
