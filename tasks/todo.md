@@ -5,21 +5,21 @@
 
 ---
 
-## Fase A — Métricas reales (~2h)
+## Fase A — Métricas reales (~2h) ✅
 
-- [ ] **A-1** Crear `src/actions/command-actions.ts` con `getGlobalStats()`
-- [ ] **A-1** Modificar `src/app/command/page.tsx` — datos reales (MRR, tenants, eventos, RSVP)
-- [ ] **A-2** Modificar `src/actions/studio-actions.ts` — añadir `getStudioStats()`
-- [ ] **A-2** Modificar `src/app/studio/page.tsx` — "Invitados Gestionados" y "Tasa de Respuesta" reales
+- [x] **A-1** Crear `src/actions/command-actions.ts` con `getGlobalStats()`
+- [x] **A-1** Modificar `src/app/command/page.tsx` — datos reales (MRR, tenants, eventos, RSVP)
+- [x] **A-2** Modificar `src/actions/studio-actions.ts` — añadir `getStudioStats()`
+- [x] **A-2** Modificar `src/app/studio/page.tsx` — "Invitados Gestionados" y "Tasa de Respuesta" reales
 
 ---
 
-## Fase B — Event Manager en Studio (~4h)
+## Fase B — Event Manager en Studio (~4h) ✅
 
-- [ ] **B-1** Crear `src/actions/event-actions.ts` con CRUD completo
-- [ ] **B-2** Crear `src/app/studio/events/page.tsx` — lista de eventos
-- [ ] **B-3** Crear `src/app/studio/events/new/page.tsx` — formulario crear evento
-- [ ] **B-4** Crear `src/app/studio/events/[id]/page.tsx` — detalle con resumen RSVP
+- [x] **B-1** Crear `src/actions/event-actions.ts` con CRUD completo
+- [x] **B-2** Crear `src/app/studio/events/page.tsx` — lista de eventos
+- [x] **B-3** Crear `src/app/studio/events/new/page.tsx` — formulario crear evento
+- [x] **B-4** Crear `src/app/studio/events/[id]/page.tsx` — detalle con resumen RSVP
 
 **✓ Checkpoint B:** Revendedor puede crear y ver eventos.
 

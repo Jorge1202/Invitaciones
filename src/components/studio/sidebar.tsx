@@ -41,10 +41,13 @@ export function StudioSidebar() {
       </div>
 
       <div className="px-6 mb-8">
-         <button className="w-full bg-studio-text text-white rounded-2xl py-4 px-6 flex items-center justify-center gap-3 hover:bg-studio-accent transition-all duration-500 shadow-soft group">
+         <Link
+           href="/studio/events/new"
+           className="w-full bg-studio-text text-white rounded-2xl py-4 px-6 flex items-center justify-center gap-3 hover:bg-studio-accent transition-all duration-500 shadow-soft group"
+         >
             <Plus size={20} className="group-hover:rotate-90 transition-transform duration-500" />
             <span className="font-bold text-sm tracking-wide">Nuevo Evento</span>
-         </button>
+         </Link>
       </div>
 
       <nav className="flex-1 px-6 space-y-2">
