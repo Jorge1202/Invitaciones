@@ -1,12 +1,13 @@
 import NextAuth from "next-auth";
-import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { Role } from "@prisma/client";
 
+// JWT strategy + Credentials provider: no adapter needed.
+// Sessions are stateless (stored in the JWT), not in the database.
+// Users are queried manually in authorize() using Prisma directly.
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(prisma),
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days

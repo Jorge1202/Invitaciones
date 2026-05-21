@@ -32,7 +32,7 @@ export default async function MasterTemplatesPage() {
 
   const byTier = TIER_LIST.map(t => ({
     tier:  t,
-    count: templates.filter(tp => (((tp as any).tier ?? "basic") as TemplateTierKey) === t.key).length,
+    count: templates.filter(tp => (tp.tier as TemplateTierKey) === t.key).length,
   }));
 
   return (
@@ -76,7 +76,7 @@ export default async function MasterTemplatesPage() {
       {/* Template grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {templates.map(template => {
-          const tierKey   = ((template as any).tier ?? "basic") as TemplateTierKey;
+          const tierKey   = (template.tier as TemplateTierKey) ?? "basic";
           const tierBadge = TIER_BADGE[tierKey];
           const tierDef   = TIER_FEATURES[tierKey];
           const statusCls = STATUS_BADGE[template.status] ?? STATUS_BADGE.draft;

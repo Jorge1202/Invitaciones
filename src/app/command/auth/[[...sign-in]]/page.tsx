@@ -28,7 +28,7 @@ export default function CommandSignInPage() {
       } else {
         router.push("/command");
       }
-    } catch (err) {
+    } catch {
       setError("Ocurrió un error inesperado");
     } finally {
       setLoading(false);

@@ -7,7 +7,7 @@ export default async function CommandLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
+  await auth();
 
   return (
     <div className="min-h-screen bg-command-bg text-command-text flex">

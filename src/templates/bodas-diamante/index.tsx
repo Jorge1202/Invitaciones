@@ -1,14 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { InvitationData } from "@/types/invitation";
-import { 
-  Calendar, 
-  MapPin, 
-  Clock, 
-  Music2, 
-  Gift, 
-  Heart, 
+import {
+  MapPin,
+  Gift,
+  Heart,
   Info,
   ChevronDown
 } from "lucide-react";
@@ -35,7 +33,7 @@ export default function TemplateBodaDiamante({ data }: BodaDiamanteProps) {
         {/* Background Image Placeholder with Overlay */}
         <div className="absolute inset-0 z-0">
            {cover.heroImage ? (
-             <img src={cover.heroImage} alt="Cover" className="w-full h-full object-cover" />
+             <Image src={cover.heroImage} alt="Cover" fill className="object-cover" />
            ) : (
              <div className="w-full h-full bg-stone-200" />
            )}
@@ -80,7 +78,7 @@ export default function TemplateBodaDiamante({ data }: BodaDiamanteProps) {
           >
             <Heart size={24} className="mx-auto mb-8 text-[var(--primary-color)] opacity-40" />
             <p className="text-2xl font-fraunces italic text-studio-text leading-relaxed">
-              "{cover.quote}"
+              &ldquo;{cover.quote}&rdquo;
             </p>
           </motion.div>
         </section>

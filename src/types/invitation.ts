@@ -1,5 +1,3 @@
-import { Role, Plan } from "@prisma/client";
-
 export interface InvitationData {
   global: {
     primaryColor: string;

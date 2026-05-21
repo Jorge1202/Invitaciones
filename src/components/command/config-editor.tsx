@@ -44,15 +44,33 @@ type Tab = "theme" | "typography" | "sections" | "advanced";
 
 interface SectionItem { id: string; enabled: boolean; }
 
+export interface TemplateConfig {
+  theme?: { primary?: string; secondary?: string; accent?: string };
+  typography?: { pairId?: string; headingFont?: string; bodyFont?: string };
+  sectionsOrder?: string[];
+  features?: {
+    hasMusic?: boolean;
+    hasCountdown?: boolean;
+    hasGallery?: boolean;
+    hasRSVP?: boolean;
+    hasGifts?: boolean;
+    hasItinerary?: boolean;
+    hasBankTransfer?: boolean;
+    hasAnimations?: boolean;
+    hasMultiLocation?: boolean;
+  };
+  [key: string]: unknown;
+}
+
 interface ConfigEditorProps {
   templateId: string;
-  initialConfig: any;
-  onPreview: (config: any) => void;
+  initialConfig: TemplateConfig;
+  onPreview: (config: TemplateConfig) => void;
 }
 
 // ─── Init helpers ─────────────────────────────────────────────────────────────
 
-function initSections(config: any): SectionItem[] {
+function initSections(config: TemplateConfig): SectionItem[] {
   const enabledOrder: string[] = config.sectionsOrder ?? SECTION_DEFS.map(s => s.id);
   const allIds: string[] = SECTION_DEFS.map(s => s.id);
   // Start with those in enabledOrder (in order), then append missing ones
@@ -167,8 +185,8 @@ export function ConfigEditor({ templateId, initialConfig, onPreview }: ConfigEdi
       await updateTemplateConfig(templateId, config);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
-    } catch (e: any) {
-      setError(e.message ?? "Error al guardar");
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Error al guardar");
     } finally {
       setSaving(false);
     }

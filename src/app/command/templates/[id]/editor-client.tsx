@@ -6,13 +6,14 @@ import { ConfigEditor } from "@/components/command/config-editor";
 import { ArrowLeft, Smartphone, Tablet, Monitor, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { type TemplateConfig } from "@/components/command/config-editor";
 
 interface TemplateEditorProps {
   template: {
     id: string;
     name: string;
     componentId: string;
-    config: any;
+    config: TemplateConfig;
   };
 }
 
@@ -139,7 +140,7 @@ export default function TemplateEditorClient({ template }: TemplateEditorProps) 
             <TemplateRegistry
               key={previewKey}
               componentId={template.componentId}
-              data={mockData as any}
+              data={mockData as import("@/types/invitation").InvitationData}
             />
           </div>
         </main>

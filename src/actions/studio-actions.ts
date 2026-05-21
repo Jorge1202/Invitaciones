@@ -3,7 +3,6 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { Role, RSVPStatus } from "@prisma/client";
-import { redirect } from "next/navigation";
 
 export async function getStudioStats(tenantId: string) {
   const [totalGuests, confirmedGuests] = await Promise.all([

@@ -28,7 +28,7 @@ export default function StudioSignInPage() {
       } else {
         router.push("/studio");
       }
-    } catch (err) {
+    } catch {
       setError("Ocurrió un error inesperado");
     } finally {
       setLoading(false);

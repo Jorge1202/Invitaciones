@@ -1,9 +1,10 @@
-import { getCurrentTenant } from "@/actions/studio-actions";
+import { getCurrentTenant, getStudioStats } from "@/actions/studio-actions";
 import { CalendarDays, Users2, Star, TrendingUp, ArrowUpRight, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default async function StudioDashboard() {
   const tenant = await getCurrentTenant();
+  const studioStats = tenant ? await getStudioStats(tenant.id) : null;
 
   return (
     <div className="max-w-7xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-1000">
@@ -31,9 +32,9 @@ export default async function StudioDashboard() {
       {/* Modern Stats Display */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {[
-          { label: "Eventos Activos", value: tenant?._count.events || 0, icon: CalendarDays, color: "bg-studio-accent", text: "text-white" },
-          { label: "Invitados Gestionados", value: "0", icon: Users2, color: "bg-white", text: "text-studio-accent" },
-          { label: "Tasa de Respuesta", value: "0%", icon: TrendingUp, color: "bg-white", text: "text-studio-botanic" },
+          { label: "Eventos Activos", value: tenant?._count.events ?? 0, icon: CalendarDays, color: "bg-studio-accent", text: "text-white" },
+          { label: "Invitados Gestionados", value: studioStats?.totalGuests ?? 0, icon: Users2, color: "bg-white", text: "text-studio-accent" },
+          { label: "Tasa de Respuesta", value: studioStats?.responseRate ?? "0%", icon: TrendingUp, color: "bg-white", text: "text-studio-botanic" },
           { label: "Créditos IA", value: "Ilimitados", icon: Sparkles, color: "bg-white", text: "text-purple-500" },
         ].map((stat, i) => (
           <div key={i} className={cn(
