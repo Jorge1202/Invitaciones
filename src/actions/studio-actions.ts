@@ -2,8 +2,22 @@
 
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
-import { Role } from "@prisma/client";
+import { Role, RSVPStatus } from "@prisma/client";
 import { redirect } from "next/navigation";
+
+export async function getStudioStats(tenantId: string) {
+  const [totalGuests, confirmedGuests] = await Promise.all([
+    prisma.guest.count({ where: { tenantId } }),
+    prisma.guest.count({ where: { tenantId, status: RSVPStatus.confirmed } }),
+  ]);
+
+  const responseRate =
+    totalGuests > 0
+      ? `${((confirmedGuests / totalGuests) * 100).toFixed(1)}%`
+      : "0%";
+
+  return { totalGuests, confirmedGuests, responseRate };
+}
 
 export async function getCurrentTenant() {
   const session = await auth();
